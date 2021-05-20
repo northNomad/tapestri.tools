@@ -13,9 +13,11 @@ Imports:
   GenomicRanges (>= 1.42.0),
   rentrez (>= 1.2.3),
   rhdf5 (>= 2.34.0),
-  rtracklayer (>= 1.49.5)
+  rtracklayer (>= 1.49.5),
+  SummarizedExperiment (>= 1.20.0)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/northNomad/tapestri.tools
 BugReports: https://github.com/northNomad/tapestri.tools/issues
+RoxygenNote: 7.1.1
