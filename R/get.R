@@ -37,6 +37,7 @@ get_variants <- function(h5f,
 
 
 
+
 #' Getting FLT3 internal tandem duplication (ITD) variants
 #'
 #' get_flt3itd retrieves FLT3 ITD variants in an .h5 file
@@ -57,6 +58,7 @@ get_flt3itd <- function(h5f,
                         insertion_size = c(6, 180)){
 
   var_flt3 <- get_variants(h5f, format = "GRanges")
+
   var_flt3 <- var_flt3[var_flt3$SYMBOL == "FLT3"]
 
   var_flt3 <- var_flt3[var_flt3 %within% gr_coordinate_within] #Select the variants within `gr_coordinate_within`
@@ -78,3 +80,43 @@ get_flt3itd <- function(h5f,
     return(var_flt3)
   }
 }
+
+
+
+
+
+#' Getting the row index of interesting variants
+#'
+#' Given a vector of named variants, get_variants_index returns their row indexes in /assays/dna_variants/layers of an h5f.
+#' It is useful to index which variants (rows) to return when retrieving NGT matrices.
+#'
+#' @param h5f h5f
+#' @param variants A named vector.
+#'  You should get the value from the \code{id} column after calling \code{get_variants}.
+#'  If you don't provide the names of the variants, R will do a bad job for you.
+#' @param sort TRUE or FALSE. Whether to sort indexes by genomic coordinates. Defaults to TRUE.
+#' @return A named numeric vector
+#' @examples
+#' #Retrieving the NGT matrix for IDH1_R132H and NPM1c
+#' \dontrun{
+#' interesting_variants <- c(IDH1_R132H = "chr2:209113112:C/T", NPM1c = "chr5:170837543:C/CTCTG")
+#' index <- get_variants_index(h5f, interesting_variants)
+#' read_dna_variants(h5f, index_variants = index, included_assays = "NGT")
+#' }
+get_variants_index <- function(h5f,
+                               variants,
+                               sort = TRUE){
+
+  dt.var <- get_variants(h5f, "data.table")
+  indx.variants <- match(variants, dt.var$id)
+  names(indx.variants) <- names(variants)
+
+  if(sort == TRUE){
+    indx.variants <- sort(indx.variants)
+    return(indx.variants)
+  }
+
+  return(indx.variants)
+}
+
+
