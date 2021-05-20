@@ -1,11 +1,19 @@
 Package: tapestri.tools
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
+Title: A toolbox for the analysis of tapestri single cell multi-omics data
+Version: 0.0.9000
+Author: Authors@R: person("Alex_CH", "Liu", email = "alexch.liu@mail.utoronto.ca", role = c("aut", "cre"))
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
+Imports:
+  data.table (>= 1.14.0),
+  dplyr (>= 1.0.5),
+  maftools (>= 2.6.05),
+  GenomicRanges (>= 1.42.0),
+  rentrez (>= 1.2.3),
+  rhdf5 (>= 2.34.0),
+  rtracklayer (>= 1.49.5)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
