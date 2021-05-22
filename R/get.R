@@ -120,3 +120,61 @@ get_variants_index <- function(h5f,
 }
 
 
+
+
+#' Getting the column index of interesting cells
+#'
+#' get_cells_index finds which cells are called with the queried NGT for all given variants.
+#'
+#' @param h5f h5f
+#' @param variants A named vector.
+#'  You should get the value from the \code{id} column after calling \code{get_variants}.
+#'  If you don't provide the names of the variants, R will do a bad job for you.
+#' @param int_ngt A numeric vector. Specifies genotypes of interest.
+#' @param cell_index A numeric vector. Use this if you want to restrict the search to a subset of cells.
+#' @return Either a numeric vector or a named list of numeric vectors.
+#' @examples
+#' #Retrieving the NGT matrix for IDH1_R132H and NPM1c
+#' \dontrun{
+#'
+#' #Want to find which cells are mutated for IDH1_R132H and NPM1c
+#' interesting_variants <- c(IDH1_R132H = "chr2:209113112:C/T",
+#'                           NPM1c = "chr5:170837543:C/CTCTG")
+#' get_cells_index(h5f,
+#'                 variants = interesting_variants,
+#'                 int_ngt = c(1, 2))
+#'
+#' #Want to find which cells are unknown for IDH1_R132H
+#' get_cells_index(h5f,
+#'                 variants = c(IDH1_R132H = "chr2:209113112:C/T"),
+#'                 int_ngt = 3)
+#'
+#' }
+##Get index of cells based on variants and wanted NGT
+get_cells_index <- function(h5f,
+                            variants,
+                            int_ngt, cell_index = NULL){
+
+  dt_var <- get_variants(h5f, "data.table")
+  indx_var <- get_variants_index(h5f, variants, sort = TRUE)
+
+  ngt <- read_assays_variants(h5f, included_assays = "NGT", index_variants = indx_var, index_cells = cell_index, format = "list")
+  ngt <- as.data.frame(ngt)
+
+  apply(ngt, 1, function(x){
+    x %in% int_ngt
+  }) %>%
+    apply(2, function(x){which(x == TRUE)}) -> index_list
+
+  names(index_list) <- names(indx_var)
+
+  if(length(variants) == 1){
+    #return a numeric vector if only one variant is supplied
+    attr(index_list, "names") <- NULL
+    attr(index_list, "dim") <- NULL
+  }
+
+  return(index_list)
+}
+
+
