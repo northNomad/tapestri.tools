@@ -6,7 +6,7 @@ Author: Authors@R: person("Alex_CH", "Liu", email = "alexch.liu@mail.utoronto.ca
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-Imports:
+Depends:
   data.table (>= 1.14.0),
   dplyr (>= 1.0.5),
   maftools (>= 2.6.05),
