@@ -6,7 +6,6 @@
 #' @return h5f
 #' @examples
 #' path <- "path/to/.h5"
-#' h5f <- read_h5f(path)
 #' h5f <- read_h5(path)
 read_h5 <- function(path){
   h5f <- rhdf5::H5Fopen(path, flags = "H5F_ACC_RDONLY")
@@ -37,7 +36,7 @@ read_h5 <- function(path){
 #'     }
 #'     \item{RGQ}{???}
 #'   }
-#' @param index_cells A named numeric vector. You should use \code{get_variants_index} to retrieve the indexes.
+#' @param index_variants A named numeric vector. You should use \code{get_variants_index} to retrieve the indexes.
 #' @param index_cells A numeric vector. Specifies which cells (columns) to retrieve.
 #' @param format A character. Specifies the return format. Either a \code{list} or a \code{RangedSummarizedExperiment}.
 #' @return Default is a named \code{list}. Can return a \code{RangedSummarizedExperiment} if specified.
@@ -82,3 +81,40 @@ read_assays_variants <- function(h5f,
   }
 }
 
+
+
+
+#' Reading protein read counts
+#'
+#' read_protein_counts retrieves the protein read counts in an h5f.
+#'
+#' @param h5f h5f
+#' @param transpose Boolean. If \code{TRUE}, columns represent proteins and rows represent cells.
+#' @param index_cells A numeric vector. Specifies which cells to retrieve.
+#' @param normalization Either \code{clr} or \code{raw}. Defaults to \code{clr}, as implemented by the \code{compositions} package.
+#' @return matrix
+#' @examples
+#' path <- "path/to/.h5"
+#' h5f <- read_h5(path)
+#'
+#' read_protein_counts(h5f)
+read_protein_counts <- function(h5f,
+                                transpose = c(TRUE, FALSE),
+                                index_cells = NULL,
+                                normalization = c("clr", "raw")){
+  x <- rhdf5::h5read(h5f, "/assays/protein_read_counts/layers/read_counts", index = c(NULL, index_cells))
+  id <- rhdf5::h5read(h5f, "/assays/protein_read_counts/ca/id")
+
+  if(normalization == "clr"){
+    x <- base::apply(x, 1, compositions::clr, simplify = FALSE) %>% do.call(rbind, .)
+  }
+
+  if(transpose){
+    x <- t(x)
+    colnames(x) <- id
+    return(x)
+  } else{
+    rownames(x) <- id
+    return(x)
+  }
+}
