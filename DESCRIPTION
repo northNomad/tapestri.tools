@@ -7,6 +7,7 @@ Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 Depends:
+  compositions (>= 2.0.1),
   data.table (>= 1.14.0),
   dplyr (>= 1.0.5),
   maftools (>= 2.6.05),
