@@ -17,6 +17,5 @@ Wrapper function for H5Fopen from rhdf5. Reads in a \code{.h5} file.
 }
 \examples{
 path <- "path/to/.h5"
-h5f <- read_h5f(path)
 h5f <- read_h5(path)
 }
