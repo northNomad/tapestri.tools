@@ -160,3 +160,82 @@ plot_protein_by_clones <- function(h5f,
   ###
   return(plot_list)
 }
+
+
+
+
+
+#' Plot VAF of variants across clones
+#'
+#' An in-house function used to identify multiplets in sequencing.
+#'
+#' @param h5f h5f
+#' @param index_cells_list A named list of integers.
+#'   The names are the names of the clones.
+#'   The integers are the index of cells that belong to the corresponding clones.
+#' @param indx_variants See \link[tapestri.tools]{get_variants_index}
+#' @param return_data Boolean. If \code{TRUE}, returns the tidy-data used for plotting
+#' @return A named list of ggplot objects, or the underlying tidy-data
+#' @examples
+#' #Compare IDH1_R132H VAF between wild type and mutant cells
+#'
+#' \dontrun{
+#' idh1mt <- get_cells_index(h5f, variants = c(IDH1_R132H = "chr2:209113112:C/T"), int_ngt = 1)
+#' idh1wt <- get_cells_index(h5f, variants = c(IDH1_R132H = "chr2:209113112:C/T"), int_ngt = 0)
+#' index_cells_list <- list(idh1wt = idh1wt, idh1mt = idh1mt)
+#'
+#' plot_vaf_by_clones(h5f,
+#'   index_cells_list = indx_ls,
+#'   index_variants = get_variants_index(h5f, c(IDH1_R132H = "chr2:209113112:C/T"))
+#'   )
+#' }
+plot_vaf_by_clones <- function(h5f,
+                               index_cells_list,
+                               index_variants,
+                               return_data = FALSE){
+
+  x <- read_assays_variants(h5f,
+                            c("AF"),
+                            index_variants = index_variants,
+                            format = "list")
+
+  dt_vaf <- x$AF %>% t() %>% as.data.frame()
+  #dt_ngt <- x$NGT %>% t() %>% as.data.frame()
+  rm(x)
+
+  ###
+  group_names <- names(index_cells_list)
+  dt <- data.frame()
+  for(i in group_names){
+    dt_sub <- dt_vaf[index_cells_list[[i]], , drop = FALSE]
+    dt_sub$group <- i
+
+    dt <- dplyr::bind_rows(dt, dt_sub)
+  }
+  ###
+
+  ###
+  #Make data tidy for plotting
+  dt <- dt %>%
+    pivot_longer(cols = 1:(ncol(.)-1),
+                 names_to = "variants",
+                 values_to = "vaf")
+  ###
+
+  if(return_data == TRUE){
+    return(dt)
+    }
+
+  #declare list to store plots
+  plot_list <- list()
+
+  for(i in names(index_variants)){
+    dt_sub <- subset(dt, variants == i)
+    p <- ggplot(dt_sub, aes(group, vaf)) +
+      geom_boxplot() +
+      ggtitle(i)
+
+    plot_list[[i]] <- p
+  }
+  return(plot_list)
+}
