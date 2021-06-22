@@ -31,6 +31,8 @@ Possible values are \describe{
   \item{RGQ}{???}
 }}
 
+\item{index_variants}{A named numeric vector. You should use \code{get_variants_index} to retrieve the indexes.}
+
 \item{index_cells}{A numeric vector. Specifies which cells (columns) to retrieve.}
 
 \item{format}{A character. Specifies the return format. Either a \code{list} or a \code{RangedSummarizedExperiment}.}
