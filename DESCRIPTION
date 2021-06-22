@@ -14,6 +14,7 @@ Depends:
   magrittr (>= 2.0.1),
   GenomicRanges (>= 1.42.0),
   ggplot2 (>= 3.3.3),
+  ggridges (>= 0.5.3), 
   rentrez (>= 1.2.3),
   rhdf5 (>= 2.34.0),
   rtracklayer (>= 1.49.5),
