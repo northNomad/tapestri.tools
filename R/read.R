@@ -141,7 +141,7 @@ read_amplicons_bed <- function(bed,
 
   if(format == "GRanges"){
     x <- GRanges(seqnames = x$chrom,
-                 ranges = IRanges(start = x$chromStart, end = chromEnd),
+                 ranges = IRanges(start = x$chromStart, end = x$chromEnd),
                  mcols = data.frame(name = x$name)
                  )
     return(x)
