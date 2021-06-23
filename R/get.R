@@ -178,3 +178,23 @@ get_cells_index <- function(h5f,
 }
 
 
+
+
+
+#' Get protein ids
+#'
+#' Retrieves the protein ids in a h5 file
+#'
+#' @param h5f h5f
+#' @return String
+#' @examples
+#' ids <- get_protein_ids(h5f)
+get_protein_ids <- function(h5f){
+  x <- rhdf5::h5read(h5f, "/assays/protein_read_counts/ca/id")
+  return(x)
+}
+
+
+
+
+

@@ -118,3 +118,34 @@ read_protein_counts <- function(h5f,
     return(x)
   }
 }
+
+
+
+
+#' Read tapestri amplicons
+#'
+#' Read bed file describing coverage of tapestri amplicons
+#'
+#' @param bed path to a 4 column .bed file.
+#'   The four columns are: chrom, chromStart, chromEnd, name.
+#' @param format Either \code{GRanges} or \code{data.table}. Defaults to \code{GRanges}.
+#' @examples
+#' \dontrun{
+#'   gr_amplicons <- read_amplicons_bed("path/to/bed")
+#' }
+read_amplicons_bed <- function(bed,
+                               format = c("GRanges", "data.table")){
+
+  name_col <- c("chrom", "chromStart", "chromEnd", "name")
+  x <- read.delim(bed, col.names = name_col) %>% data.table()
+
+  if(format == "GRanges"){
+    x <- GRanges(seqnames = x$chrom,
+                 ranges = IRanges(start = x$chromStart, end = chromEnd),
+                 mcols = data.frame(name = x$name)
+                 )
+    return(x)
+  } else{
+    return(x)
+  }
+}

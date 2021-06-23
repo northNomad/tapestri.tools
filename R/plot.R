@@ -76,7 +76,7 @@ plot_upset_with_variants <- function(h5f,
 #'   The names are the names of the clones.
 #'   The integers are the index of cells that belong to the corresponding clones.
 #' @param select_proteins A character vector. Specifies the proteins to plot.
-#' To see available options, run \code{rhdf5::h5read(h5f, "/assays/protein_read_counts/ca/id")}
+#' To see available proteins, see \code{\link{get_protein_ids}}
 #' @param geom Either \code{ridges} or \code{boxplot}. Default is \code{ridges}.
 #' @return A named list of ggplot objects
 #' @examples
@@ -173,7 +173,7 @@ plot_protein_by_clones <- function(h5f,
 #' @param index_cells_list A named list of integers.
 #'   The names are the names of the clones.
 #'   The integers are the index of cells that belong to the corresponding clones.
-#' @param indx_variants See \link[tapestri.tools]{get_variants_index}
+#' @param indx_variants See \code{\link{get_variants_index}}
 #' @param return_data Boolean. If \code{TRUE}, returns the tidy-data used for plotting
 #' @return A named list of ggplot objects, or the underlying tidy-data
 #' @examples
