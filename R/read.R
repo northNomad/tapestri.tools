@@ -106,7 +106,7 @@ read_protein_counts <- function(h5f,
   id <- rhdf5::h5read(h5f, "/assays/protein_read_counts/ca/id")
 
   if(normalization == "clr"){
-    x <- base::apply(x, 1, compositions::clr, simplify = FALSE) %>% do.call(rbind, .)
+    x <- base::apply(x, 2, compositions::clr, simplify = FALSE) %>% do.call(cbind, .)
   }
 
   if(transpose){
