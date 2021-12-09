@@ -19,7 +19,7 @@ The names are the names of the clones.
 The integers are the index of cells that belong to the corresponding clones.}
 
 \item{select_proteins}{A character vector. Specifies the proteins to plot.
-To see available options, run \code{rhdf5::h5read(h5f, "/assays/protein_read_counts/ca/id")}}
+To see available proteins, see \code{\link{get_protein_ids}}}
 
 \item{geom}{Either \code{ridges} or \code{boxplot}. Default is \code{ridges}.}
 }

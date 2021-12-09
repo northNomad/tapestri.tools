@@ -15,7 +15,7 @@ The integers are the index of cells that belong to the corresponding clones.}
 
 \item{return_data}{Boolean. If \code{TRUE}, returns the tidy-data used for plotting}
 
-\item{indx_variants}{See \link[tapestri.tools]{get_variants_index}}
+\item{indx_variants}{See \code{\link{get_variants_index}}}
 }
 \value{
 A named list of ggplot objects, or the underlying tidy-data
