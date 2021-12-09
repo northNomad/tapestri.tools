@@ -42,7 +42,7 @@ plot_upset_with_variants <- function(h5f,
       data.table() %>%
       mutate_all(as.numeric)
     if(return_data == FALSE){
-      return(UpSetR::upset(dt.ngt, nsets = nsets))
+      return(UpSetR::upset(as.data.frame(dt.ngt), nsets = nsets))
     } else {
       return(dt.ngt)
     }
@@ -56,7 +56,7 @@ plot_upset_with_variants <- function(h5f,
     indx_unknown <- apply(dt.ngt, 1, function(x){any(x == 3)})
     dt.ngt <- dt.ngt[!indx_unknown, ]
     if(return_data == FALSE){
-      return(UpSetR::upset(dt.ngt, nsets = nsets))
+      return(UpSetR::upset(as.data.frame(dt.ngt), nsets = nsets))
     } else {
       return(dt.ngt)
     }
