@@ -102,7 +102,7 @@ read_protein_counts <- function(h5f,
                                 transpose = c(TRUE, FALSE),
                                 index_cells = NULL,
                                 normalization = c("clr", "raw")){
-  x <- rhdf5::h5read(h5f, "/assays/protein_read_counts/layers/read_counts", index = c(NULL, index_cells))
+  x <- rhdf5::h5read(h5f, "/assays/protein_read_counts/layers/read_counts", index = list(NULL, index_cells))
   id <- rhdf5::h5read(h5f, "/assays/protein_read_counts/ca/id")
 
   if(normalization == "clr"){
