@@ -24,9 +24,7 @@ devtools::install_github("northNomad/tapestri.tools")
 ``` r
 #Load tapestri multi-omics data stored in .h5 format into session
 h5f <- tapestri.tools::read_h5(path = "data_private/mpdxD-18_MB_33_38.dna+protein.h5")
-```
 
-``` r
 dt_variants <- get_variants(h5f = h5f, format = "data.table")
 head(dt_variants)
 #>    ALT CHROM       POS             QUAL REF ado_gt_cells ado_rate
@@ -67,7 +65,7 @@ tapestri.tools::plot_upset_with_variants(h5f, variants = int_variants, unknown =
 #> first element will be used
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 ### Filter or index the cells based on the genotypes of specific variants:
 
@@ -81,6 +79,15 @@ index_cells_IDH2 <- get_cells_index(h5f, variants = int_variants[2], int_ngt = c
 #which cells are doublets 
 x <- get_cells_index(h5f, variants = int_variants, int_ngt = c(1, 2)) 
 index_doublets <- intersect(x$IDH1_R132H, x$IDH2_R140Q)
+
+####
+index_cells_IDH1 <- index_cells_IDH1[!(index_cells_IDH1 %in% index_doublets)]
+index_cells_IDH2 <- index_cells_IDH2[!(index_cells_IDH2 %in% index_doublets)]
+
+length(index_cells_IDH1) #2919
+#> [1] 2919
+length(index_cells_IDH2) #839
+#> [1] 839
 ```
 
 ### Read in genotype matrix of FLT3ITD variants of IDH1 mutated cells
@@ -102,7 +109,7 @@ read_assays_variants(h5f,
 names(x) #AF, NGT
 #> [1] "AF"  "NGT"
 dim(x$AF)
-#> [1]   18 3071
+#> [1]   18 2919
 ```
 
 ## Protein UMAPs
@@ -115,7 +122,6 @@ get_protein_ids(h5f)
 
 ``` r
 dt_protein <- read_protein_counts(h5f, normalization = "clr", transpose = TRUE) %>% as.data.frame() 
-
 
 umap_protein <- umap::umap(dt_protein)
 umap_protein <- cbind(umap_protein$data, as.data.frame(umap_protein$layout))
@@ -132,8 +138,9 @@ for(i in get_protein_ids(h5f)){
   ls_umap[[i]] <- p
 }
 #
-patchwork::wrap_plots(ls_umap, ncol = 2)
+library(patchwork)
+ls_umap[["CD33"]] + ls_umap[["CD14"]]
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 ….More plotting and filtering functions to come…
