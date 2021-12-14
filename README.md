@@ -19,13 +19,12 @@ You can install the development version of tapestri.tools from
 devtools::install_github("northNomad/tapestri.tools")
 ```
 
-## Load tapestri multi-omics data stored in .h5 format into session
+## Read all the DNA variants
 
 ``` r
+#Load tapestri multi-omics data stored in .h5 format into session
 h5f <- tapestri.tools::read_h5(path = "data_private/mpdxD-18_MB_33_38.dna+protein.h5")
 ```
-
-## Read all the variants called by haplotype caller
 
 ``` r
 dt_variants <- get_variants(h5f = h5f, format = "data.table")
@@ -53,23 +52,19 @@ samples into one immunodeficient mice.
 
 12 weeks after transplantation, we harvested the bone marrow cells and
 performed single cell DNA + protein sequencing using MissionBio’s
-tapestri platform.
-
-One of the AML sample carries IDH1<sup>R132H</sup> mutation, the other
-carries IDH2<sup>R140Q</sup>; we know these two *IDH* variants are
-mutually exclusive.
+tapestri platform. One of the AML sample carries IDH1<sup>R132H</sup>
+mutation, the other carries IDH2<sup>R140Q</sup>; we know these two
+*IDH* variants are mutually exclusive.
 
 ``` r
 #based on hg19
 int_variants <- c(IDH1_R132H = "chr2:209113112:C/T", IDH2_R140Q = "chr15:90631934:C/T")
 
-tapestri.tools::plot_upset_with_variants(h5f, variants = int_variants)
+tapestri.tools::plot_upset_with_variants(h5f, variants = int_variants, unknown = "unknown_to_ref")
 #> Warning in if (format == "GRanges") {: the condition has length > 1 and only the
 #> first element will be used
 #> Warning in if (format == "list") {: the condition has length > 1 and only the
 #> first element will be used
-#> Warning in if (unknown == "unknown_to_ref") {: the condition has length > 1 and
-#> only the first element will be used
 ```
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
@@ -85,28 +80,17 @@ index_cells_IDH2 <- get_cells_index(h5f, variants = int_variants[2], int_ngt = c
 
 #which cells are doublets 
 x <- get_cells_index(h5f, variants = int_variants, int_ngt = c(1, 2)) 
-intersect(x$IDH1_R132H, x$IDH2_R140Q)
-#>   [1]   16  122  155  224  246  252  256  261  291  313  319  324  372  375  405
-#>  [16]  437  449  450  468  470  498  537  558  562  582  602  700  725  731  739
-#>  [31]  804  815  958  972  979 1011 1031 1047 1117 1216 1223 1301 1366 1380 1383
-#>  [46] 1423 1468 1516 1540 1558 1561 1567 1594 1680 1711 1748 1773 1791 1800 1832
-#>  [61] 1844 1855 1882 1897 1912 1919 1923 1984 1992 1999 2025 2093 2138 2145 2174
-#>  [76] 2220 2222 2266 2304 2363 2418 2421 2444 2446 2489 2496 2512 2557 2598 2600
-#>  [91] 2606 2609 2631 2672 2689 2722 2807 2827 2843 2847 2855 2858 2891 2900 2919
-#> [106] 2924 2932 2997 3010 3038 3044 3052 3148 3180 3189 3190 3206 3215 3233 3242
-#> [121] 3278 3342 3344 3374 3400 3401 3449 3467 3543 3554 3567 3611 3624 3639 3684
-#> [136] 3701 3702 3711 3734 3806 3816 3918 3952 3986 4007 4014 4027 4035 4053 4054
-#> [151] 4093 4096
+index_doublets <- intersect(x$IDH1_R132H, x$IDH2_R140Q)
 ```
 
 ### Read in genotype matrix of FLT3ITD variants of IDH1 mutated cells
 
 ``` r
-id_FLT3ITD <- get_flt3itd(h5f)$id
-#> Warning in if (format == "GRanges") {: the condition has length > 1 and only the
-#> first element will be used
-#> Warning in if (format == "data.table") {: the condition has length > 1 and only
-#> the first element will be used
+FLT3ITD <- get_flt3itd(h5f, format = "data.table")
+```
+
+``` r
+id_FLT3ITD <- FLT3ITD$id
 names(id_FLT3ITD) <- paste0("FLT3ITD", 1:length(id_FLT3ITD))
 
 read_assays_variants(h5f, 
@@ -121,4 +105,35 @@ dim(x$AF)
 #> [1]   18 3071
 ```
 
+## Protein UMAPs
+
+``` r
+get_protein_ids(h5f)
+#>  [1] "CD11b"  "CD14"   "CD19"   "CD3"    "CD33"   "CD34"   "CD38"   "CD45"  
+#>  [9] "CD45RA" "CD90"
+```
+
+``` r
+dt_protein <- read_protein_counts(h5f, normalization = "clr", transpose = TRUE) %>% as.data.frame() 
+
+
+umap_protein <- umap::umap(dt_protein)
+umap_protein <- cbind(umap_protein$data, as.data.frame(umap_protein$layout))
+
+#
+ls_umap <- list()
+for(i in get_protein_ids(h5f)){
+  ggplot(umap_protein, aes_string("V1", "V2", color = i)) + 
+    geom_point() + 
+    theme_minimal() + 
+    labs(x = "UMAP1", y = "UMAP2") +
+    scale_color_viridis_c() -> p
+  
+  ls_umap[[i]] <- p
+}
+#
+patchwork::wrap_plots(ls_umap, nrow = 2)
+```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 ….More plotting and filtering functions to come…
