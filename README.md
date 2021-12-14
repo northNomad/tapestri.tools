@@ -43,7 +43,7 @@ head(dt_variants)
 #> 6: AML_v2_NRAS_115256512       01 chr1:115256517:C/T   NRAS
 ```
 
-## `tapestri.tools` makes data wrangling easy
+## `tapestri.tools` data wrangling
 
 In the example experiment, we transplanted a mix of two primary AML
 samples into one immunodeficient mice.
@@ -94,6 +94,64 @@ length(index_cells_IDH2) #839
 
 ``` r
 FLT3ITD <- get_flt3itd(h5f, format = "data.table")
+FLT3ITD
+#>                                                ALT CHROM      POS
+#>  1: TAAATTTTCTCTTGGAAACTCCCATTTGAGATCATATTCATATTTC chr13 28608226
+#>  2: TCCCATTTGAGATCATATTCATATTTCAAATTTTCTCTTGGAAACA chr13 28608245
+#>  3: ATTTGAGATCATATTCATATTTCAAATTTTCTCTTGGAAACTCCCC chr13 28608249
+#>  4: TTTGAGATCATATTCATATTTCAAATTTTCTCTTGGAAACTCCCAC chr13 28608250
+#>  5: TTGAGATCATATTCATATTTCAAATTTTCTCTTGGAAACTCCCATC chr13 28608251
+#>  6: ATCATATTCATATTTCAAATTTTCTCTTGGAAACTCCCATTTGAGG chr13 28608256
+#>  7:                         TTCATATTCTCTGAAATCAACG chr13 28608262
+#>  8: TTCATATTTCAAATTTTCTCTTGGAAACTCCCATATGAGATCATAC chr13 28608262
+#>  9:                         TTCTCTGAAATCAACGTCATAC chr13 28608268
+#> 10:                          TCAAATTTTCTCTTGGAAACT chr13 28608269
+#> 11:                       TCAAATTTTCTCTTGGAAACTCCC chr13 28608269
+#> 12:                          TCAAATTTTCTCTTGGACACT chr13 28608269
+#> 13:                         TCTGAAATCAACGTCATATTCA chr13 28608271
+#> 14:                         AAATCAACGTCATATTCTCTGG chr13 28608275
+#> 15:                         ATCAACGTCATATTCTCTGAAG chr13 28608277
+#> 16:                                   TACCAAACTCTA chr13 28608278
+#> 17:                                        AAACTCT chr13 28608280
+#> 18:                                         CATATT chr13 28608284
+#>                 QUAL REF ado_gt_cells ado_rate             amplicon filtered
+#>  1:  6965.7001953125   T           -1       -1 AML_v2_FLT3_28608210       01
+#>  2: 2604.65991210938   T           -1       -1 AML_v2_FLT3_28608210       01
+#>  3: 2138.34008789062   A           -1       -1 AML_v2_FLT3_28608210       01
+#>  4: 4343.85986328125   T           -1       -1 AML_v2_FLT3_28608210       01
+#>  5: 2018.66003417969   T           -1       -1 AML_v2_FLT3_28608210       01
+#>  6: 2250.61010742188   A           -1       -1 AML_v2_FLT3_28608210       01
+#>  7:           149234   T           -1       -1 AML_v2_FLT3_28608210       00
+#>  8:           149234   T           -1       -1 AML_v2_FLT3_28608210       01
+#>  9:  2666.0400390625   T           -1       -1 AML_v2_FLT3_28608210       01
+#> 10:            10000   .           -1       -1 AML_v2_FLT3_28608210       01
+#> 11:            10000   .           -1       -1 AML_v2_FLT3_28608210       01
+#> 12:            10000   .           -1       -1 AML_v2_FLT3_28608210       01
+#> 13: 1070.93005371094   T           -1       -1 AML_v2_FLT3_28608210       01
+#> 14: 1530.15002441406   A           -1       -1 AML_v2_FLT3_28608210       01
+#> 15: 1086.83996582031   A           -1       -1 AML_v2_FLT3_28608210       01
+#> 16:            10000   .           -1       -1 AML_v2_FLT3_28608210       01
+#> 17:  11546.099609375   A           -1       -1 AML_v2_FLT3_28608210       01
+#> 18:            10000   .           -1       -1 AML_v2_FLT3_28608210       01
+#>                                                                  id SYMBOL
+#>  1: chr13:28608226:T/TAAATTTTCTCTTGGAAACTCCCATTTGAGATCATATTCATATTTC   FLT3
+#>  2: chr13:28608245:T/TCCCATTTGAGATCATATTCATATTTCAAATTTTCTCTTGGAAACA   FLT3
+#>  3: chr13:28608249:A/ATTTGAGATCATATTCATATTTCAAATTTTCTCTTGGAAACTCCCC   FLT3
+#>  4: chr13:28608250:T/TTTGAGATCATATTCATATTTCAAATTTTCTCTTGGAAACTCCCAC   FLT3
+#>  5: chr13:28608251:T/TTGAGATCATATTCATATTTCAAATTTTCTCTTGGAAACTCCCATC   FLT3
+#>  6: chr13:28608256:A/ATCATATTCATATTTCAAATTTTCTCTTGGAAACTCCCATTTGAGG   FLT3
+#>  7:                         chr13:28608262:T/TTCATATTCTCTGAAATCAACG   FLT3
+#>  8: chr13:28608262:T/TTCATATTTCAAATTTTCTCTTGGAAACTCCCATATGAGATCATAC   FLT3
+#>  9:                         chr13:28608268:T/TTCTCTGAAATCAACGTCATAC   FLT3
+#> 10:                          chr13:28608269:./TCAAATTTTCTCTTGGAAACT   FLT3
+#> 11:                       chr13:28608269:./TCAAATTTTCTCTTGGAAACTCCC   FLT3
+#> 12:                          chr13:28608269:./TCAAATTTTCTCTTGGACACT   FLT3
+#> 13:                         chr13:28608271:T/TCTGAAATCAACGTCATATTCA   FLT3
+#> 14:                         chr13:28608275:A/AAATCAACGTCATATTCTCTGG   FLT3
+#> 15:                         chr13:28608277:A/ATCAACGTCATATTCTCTGAAG   FLT3
+#> 16:                                   chr13:28608278:./TACCAAACTCTA   FLT3
+#> 17:                                        chr13:28608280:A/AAACTCT   FLT3
+#> 18:                                         chr13:28608284:./CATATT   FLT3
 ```
 
 ``` r

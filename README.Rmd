@@ -43,7 +43,7 @@ dt_variants <- get_variants(h5f = h5f, format = "data.table")
 head(dt_variants)
 ```
 
-## `tapestri.tools` makes data wrangling easy
+## `tapestri.tools` data wrangling
 
 In the example experiment, we transplanted a mix of two primary AML samples into one immunodeficient mice.
 
@@ -82,6 +82,7 @@ length(index_cells_IDH2) #839
 ### Read in genotype matrix of FLT3ITD variants of IDH1 mutated cells
 ```{r}
 FLT3ITD <- get_flt3itd(h5f, format = "data.table")
+FLT3ITD
 ```
 
 
