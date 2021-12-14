@@ -132,7 +132,7 @@ for(i in get_protein_ids(h5f)){
   ls_umap[[i]] <- p
 }
 #
-patchwork::wrap_plots(ls_umap, nrow = 2)
+patchwork::wrap_plots(ls_umap, ncol = 2)
 ```
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
