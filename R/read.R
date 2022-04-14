@@ -149,3 +149,28 @@ read_amplicons_bed <- function(bed,
     return(x)
   }
 }
+
+
+
+
+#' Read ENSEMBL VEP output
+#'
+#' Reads standard VEP output.
+#'
+#' @param file path to vep .txt output file.
+#' @examples
+#' \dontrun{
+#'   write_vep_input(dt.var, "vep_input.txt")
+#'   #run vep locally
+#'   vep <- read_vep_output("path_vep_output.txt")
+#' }
+read_vep_output <- function(file){
+
+  linesToSkip <- grep("##", readLines(file))
+
+  dt.out <- read.delim(file, sep = "\t", skip = linesToSkip) %>%
+    dplyr::rename(Uploaded_variation = X.Uploaded_variation)
+
+  dt.out <- data.table(dt.out)
+  return(dt.out)
+}

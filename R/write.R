@@ -45,10 +45,10 @@ write_scite_inputs <- function(h5f,
 #' #' @examples
 #'
 #' dt.var <- get_variants(h5f)
-#' write_vep_inputs(dt.var, "vep_input.txt")
+#' write_vep_input(dt.var, "vep_input.txt")
 #' @references https://useast.ensembl.org/info/docs/tools/vep/vep_formats.html
-write_vep_inputs <- function(dt_variants,
-                             file){
+write_vep_input <- function(dt_variants,
+                            file){
 
   dt_variants %>%
     mutate(chromosome = gsub("chr", "", CHROM),
@@ -62,3 +62,6 @@ write_vep_inputs <- function(dt_variants,
 
   write_delim(out, file, delim = " ", col_names = FALSE)
 }
+
+
+##vep --offline --dir_cache $cache_dir -i ~/example_input.txt -o ~/example_vep_output.txt -merged --assembly GRCh37 --use_given_ref
