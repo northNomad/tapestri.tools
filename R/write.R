@@ -1,4 +1,3 @@
-
 #' Write input files for SCITE
 #'
 #' A helper function to write genotype matrix and .geneNames files for SCITE.
@@ -30,4 +29,36 @@ write_scite_inputs <- function(h5f,
   fileConn <- file(fp_geneNames)
   writeLines(names(indx_var), fileConn)
   close(fileConn)
+}
+
+
+
+
+
+#' Write input files for ENSEMBL VEP
+#'
+#' A helper function to write standard input files for ENSEMBL VEP.
+#'
+#' @param dt_variants A (filtered) \code{data.frame} or \code{data.table} of variants derived from \code{get_variants}
+#' @param file file path to write .txt file.
+#' @return NULL. Writes the standard VEP .txt input file.
+#' #' @examples
+#'
+#' dt.var <- get_variants(h5f)
+#' write_vep_inputs(dt.var, "vep_input.txt")
+#' @references https://useast.ensembl.org/info/docs/tools/vep/vep_formats.html
+write_vep_inputs <- function(dt_variants,
+                             file){
+
+  dt_variants %>%
+    mutate(chromosome = gsub("chr", "", CHROM),
+           start = as.numeric(POS),
+           end = start - (nchar(ALT) - nchar(REF)),
+           allele = paste(REF, ALT, sep = "/"),
+           strand = "+",
+           identifier = paste(SYMBOL, id, sep = "_")
+    ) %>%
+    dplyr::select(chromosome, start, end, allele, strand, identifier) -> out
+
+  write_delim(out, file, delim = " ", col_names = FALSE)
 }
