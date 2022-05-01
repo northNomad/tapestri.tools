@@ -168,8 +168,7 @@ read_vep_output <- function(file){
 
   linesToSkip <- grep("##", readLines(file))
 
-  dt.out <- read.delim(file, sep = "\t", skip = linesToSkip) %>%
-    dplyr::rename(Uploaded_variation = X.Uploaded_variation)
+  dt.out <- read.delim(file, sep = "\t", skip = linesToSkip)
 
   dt.out <- data.table(dt.out)
   return(dt.out)
