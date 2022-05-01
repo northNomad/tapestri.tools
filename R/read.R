@@ -170,7 +170,6 @@ read_vep_output <- function(file){
   linesToSkip <- linesToSkip[length(linesToSkip)]
 
   dt.out <- read.delim(file, sep = "\t", skip = linesToSkip)
-  dt.out <- dt.out %>% dplyr::rename("Uploaded_variation" = "#Uploaded_variation")
   dt.out <- data.table(dt.out)
 
   return(dt.out)
