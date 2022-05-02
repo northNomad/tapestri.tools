@@ -181,16 +181,17 @@ read_vep_output <- function(file){
 
 #' Read SCITE output
 #'
-#' Designate the clone of each cell based on SCITE.
+#' Designate the clone of each cell based on SCITE. If ambiguous, a random clone from all possible clones is selected.
 #'
 #' @param file path to SCITE output file in .gv format.
 #' @param cell_index_h5f A numeric vector. The index of cells used for scite in the .h5f
+#' @param seed integer.
 #' @return data.table
 #' @examples
 #' \dontrun{
 #'  read_scite_out("scite_output.gv")
 #' }
-read_scite_output <- function(file, cell_index_h5f){
+read_scite_output <- function(file, cell_index_h5f, seed = 123){
 
   #assumes -a is turned on in scite
   linesToSkip <- grep("node", readLines(file))
@@ -225,6 +226,7 @@ read_scite_output <- function(file, cell_index_h5f){
   dt.out %>%
     group_by(cell_index) %>%
     group_modify(.f = function(x, y){
+      set.seed(seed = seed)
       n <- nrow(x)
       n <- sample(n, 1)
       x[n, ]
