@@ -174,3 +174,62 @@ read_vep_output <- function(file){
 
   return(dt.out)
 }
+
+
+
+
+
+#' Read SCITE output
+#'
+#' Designate the clone of each cell based on SCITE.
+#'
+#' @param file path to SCITE output file in .gv format.
+#' @param cell_index_h5f A numeric vector. The index of cells used for scite in the .h5f
+#' @return data.table
+#' @examples
+#' \dontrun{
+#'  read_scite_out("scite_output.gv")
+#' }
+read_scite_output <- function(file, cell_index_h5f){
+
+  #assumes -a is turned on in scite
+  linesToSkip <- grep("node", readLines(file))
+  linesToSkip <- linesToSkip[length(linesToSkip)]
+
+  #read
+  dt.out <- read.delim(file, sep = "\t", skip = linesToSkip, header = FALSE)
+  dt.out <- dt.out[-nrow(dt.out), , drop = FALSE]
+  dt.out <- data.table(dt.out)
+
+  #regex manipulation
+  dt.out$Clone <- dt.out$V1 %>% str_split(" -> ") %>% lapply(function(x){x[1]}) %>% unlist()
+  #more regex manipulation
+  dt.out$scite_index <- dt.out$V1 %>%
+    str_split(" -> ") %>%
+    lapply(function(x){
+      x <- x[2]
+      x <- gsub("s", "", x)
+      x <- gsub(";", "", x)
+      x <- as.numeric(x) + 1
+      x <- as.character(x)
+    }) %>%
+    unlist()
+
+  #map scite index back to original cell index in h5f
+  dt.out$cell_index <- cell_index_h5f[as.numeric(dt.out$scite_index)]
+
+  #remove scite index. No longer needed.
+  dt.out <- dplyr::select(dt.out, Clone, cell_index)
+
+  #randomly select clone for ambiguious cells
+  dt.out %>%
+    group_by(cell_index) %>%
+    group_modify(.f = function(x, y){
+      n <- nrow(x)
+      n <- sample(n, 1)
+      x[n, ]
+      data.table(x)
+    }) -> dt.out
+
+  return(dt.out)
+}
