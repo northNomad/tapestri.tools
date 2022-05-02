@@ -228,8 +228,7 @@ read_scite_output <- function(file, cell_index_h5f){
       n <- nrow(x)
       n <- sample(n, 1)
       x[n, ]
-      data.table(x)
     }) -> dt.out
-
+  dt.out <- data.table(dt.out)
   return(dt.out)
 }
