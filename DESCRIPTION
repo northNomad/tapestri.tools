@@ -25,4 +25,4 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/northNomad/tapestri.tools
 BugReports: https://github.com/northNomad/tapestri.tools/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
