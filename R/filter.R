@@ -25,7 +25,7 @@ count_cells <- function(h5f, variants){
 
   #get called genotype of variants
   index <- get_variants_index(h5f, variants)
-  dt.ngt <- tapestri.tools::read_assays_variants(h5.ena, included_assays = "NGT", index_variants = index, format = "list")[[1]]
+  dt.ngt <- tapestri.tools::read_assays_variants(h5f, included_assays = "NGT", index_variants = index, format = "list")[[1]]
 
   #count
   dt.ngt <- apply(dt.ngt, 1, table)
