@@ -137,7 +137,7 @@ read_amplicons_bed <- function(bed,
                                format = c("GRanges", "data.table")){
 
   name_col <- c("chrom", "chromStart", "chromEnd", "name")
-  x <- read.delim(bed, col.names = name_col) %>% data.table()
+  x <- read.delim(bed, col.names = name_col, header = FALSE) %>% data.table()
 
   if(format == "GRanges"){
     x <- GRanges(seqnames = x$chrom,
