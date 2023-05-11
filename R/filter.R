@@ -23,6 +23,9 @@
 #' @param format \code{matrix} by default.
 count_cells <- function(h5f, variants){
 
+  #Check if variants are present
+  variants <- variants[variants %in% get_variants(h5f)$id]
+
   #get called genotype of variants
   index <- get_variants_index(h5f, variants)
   dt.ngt <- tapestri.tools::read_assays_variants(h5f, included_assays = "NGT", index_variants = index, format = "list")[[1]]
@@ -30,16 +33,18 @@ count_cells <- function(h5f, variants){
   #count
   dt.ngt <- apply(dt.ngt, 1, table)
 
+  m <- dt.ngt %>% lapply(function(x) t(as.matrix(x))) %>% bind_rows(.id = "Variant")
+  colnames(m) <- c("Variant", "NGT0", "NGT1", "NGT2", "NGT3")
   #where to place the counts in output matrix
-  col_index_list <- lapply(dt.ngt, function(x) as.integer(unlist(dimnames(x))) + 1)
+  # col_index_list <- lapply(dt.ngt, function(x) as.integer(unlist(dimnames(x))) + 1)
 
   #initialize output matrix
-  m <- matrix(ncol = 4, nrow = length(variants), dimnames = list(names(variants), paste0("NGT", 0:3)))
+  # m <- matrix(ncol = 4, nrow = length(variants), dimnames = list(names(variants), paste0("NGT", 0:3)))
 
   #write output
-  for(i in 1:length(variants)){
-    m[i, col_index_list[[i]]] <- as.numeric(dt.ngt[[i]])
-  }
+  # for(i in 1:length(variants)){
+  #   m[i, col_index_list[[i]]] <- as.numeric(dt.ngt[[i]])
+  # }
 
   #replace NA with zeros
   m[is.na(m)] <- 0
