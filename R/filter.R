@@ -34,8 +34,8 @@ count_cells <- function(h5f, variants){
   dt.ngt <- apply(dt.ngt, 1, table)
 
   m <- dt.ngt %>% as.matrix() %>% t() %>% as.data.frame()
-  m[, 4] <- rownames(m)
-  m <- m[, c(4, 1, 2, 3)]
+  m[, 5] <- rownames(m)
+  m <- m[, c(5, 1, 2, 3, 4)]
   
   colnames(m) <- c("Variant", "NGT0", "NGT1", "NGT2", "NGT3")
   #where to place the counts in output matrix
