@@ -34,7 +34,7 @@ count_cells <- function(h5f, variants, percent_mutated = TRUE, percent_genotyped
   #Report any undetected variants
   if(all(detected) == FALSE){
     variants_undetected <- paste(variants[!detected], sep = ";")
-    message(paste0("These variants are not detected: ", variants_undetected)
+    message(paste0("These variants are not detected: ", variants_undetected))
     }
 
   #Keep detected variants
