@@ -21,7 +21,7 @@
 #'
 #' @param h5f h5f
 #' @param format \code{matrix} by default.
-count_cells <- function(h5f, variants, percent_mutated = TRUE){
+count_cells <- function(h5f, variants, percent_mutated = TRUE, percent_genotyped = TRUE){
 
   #Check if the variants are named
   if(is.null(names(variants))){
@@ -32,7 +32,10 @@ count_cells <- function(h5f, variants, percent_mutated = TRUE){
   detected <- variants %in% get_variants(h5f)$id
 
   #Report any undetected variants
-  if(all(detected) == FALSE){message(paste0("These variants are not detected: ", variants[!detected]))}
+  if(all(detected) == FALSE){
+    variants_undetected <- paste(variants[!detected], sep = ";")
+    message(paste0("These variants are not detected: ", variants_undetected)
+    }
 
   #Keep detected variants
   variants <- variants[detected]
@@ -51,6 +54,10 @@ count_cells <- function(h5f, variants, percent_mutated = TRUE){
 
   if(percent_mutated == TRUE){
     m$percent_mutated <- with(m, (NGT1+NGT2)*100 / (NGT0+NGT1+NGT2))
+  }
+
+  if(percent_genotyped == TRUE){
+    m$percent_genotyped <- with(m, (NGT0+NGT1+NGT2)*100 / (NGT0+NGT1+NGT2+NGT3))
   }
 
   return(m)
