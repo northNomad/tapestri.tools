@@ -21,7 +21,7 @@
 #'
 #' @param h5f h5f
 #' @param format \code{matrix} by default.
-count_cells <- function(h5f, variants, percent_mutated = TRUE, percent_genotyped = TRUE){
+count_cells <- function(h5f, variants, index_cells = NULL, percent_mutated = TRUE, percent_genotyped = TRUE){
 
   #Check if the variants are named
   if(is.null(names(variants))){
@@ -42,7 +42,7 @@ count_cells <- function(h5f, variants, percent_mutated = TRUE, percent_genotyped
 
   #get called genotype of variants
   index <- get_variants_index(h5f, variants)
-  dt.ngt <- tapestri.tools::read_assays_variants(h5f, included_assays = "NGT", index_variants = index, format = "list")[[1]]
+  dt.ngt <- tapestri.tools::read_assays_variants(h5f, included_assays = "NGT", index_cells = index_cells, index_variants = index, format = "list")[[1]]
 
   #Count
   NGT0 <- apply(dt.ngt, 1, function(x) sum(x==0))
