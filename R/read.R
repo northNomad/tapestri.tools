@@ -67,7 +67,11 @@ read_assays_variants <- function(h5f,
   }
 
   if(format == "SingleCellExperiment"){
-    row_data <- get_variants(h5f, "data.table")[index_variants, ]
+    if(is.null(index_variants)){
+      row_data <- get_variants(h5f, "data.table")
+    } else{
+      row_data <- get_variants(h5f, "data.table")[index_variants, ]
+    }
     rowRanges <- GRanges(seqnames = row_data$CHROM,
                          ranges = IRanges(start = as.numeric(row_data$POS),
                                           width = nchar(row_data$REF)),
