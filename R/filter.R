@@ -1,20 +1,3 @@
-# filter_variants_by_gq <- function(h5f,
-#                             gqc = 30,
-#                             dpc = 10,
-#                             afc = 20,
-#                             mv = 50,
-#                             mc = 50,
-#                             mm = 1,
-#                             gt_mask = FALSE){
-#
-#   assays <- read_assays_variants(h5f, included_assays = c("AF", "DP", "GQ", "NGT"), format = "list")
-#
-# }
-
-
-
-
-
 #' Count the number of mutant cells given variants
 #'
 #' count_cells tally the number of called genotypes (NGT slot) of given variants
@@ -61,41 +44,145 @@ count_cells <- function(h5f, variants, index_cells = NULL, percent_mutated = TRU
   }
 
   return(m)
-  # #count
-  # dt.ngt <- apply(dt.ngt, 1, table)
-  #
-  # #Check class (will be different if not all variants have values of 0, 1, 2, 3)
-  # class <- class(dt.ngt)[1]
-  #
-  # #if matrix
-  # if(class == "matrix"){
-  #   m <- dt.ngt %>% as.matrix() %>% t() %>% as.data.frame()
-  #   m[, 5] <- rownames(m)
-  #   m <- m[, c(5, 1, 2, 3, 4)]
-  #
-  #   colnames(m) <- c("Variant", "NGT0", "NGT1", "NGT2", "NGT3")
-  # }
-  #
-  # #if list
-  # if(class == "list"){
-  #   #where to place the counts in output matrix
-  #   col_index_list <- lapply(dt.ngt, function(x) as.integer(unlist(dimnames(x))) + 1)
-  #
-  #   #initialize output matrix
-  #   m <- matrix(ncol = 4, nrow = length(variants), dimnames = list(names(variants), paste0("NGT", 0:3)))
-  #
-  #   #write output
-  #   for(i in 1:length(variants)){
-  #     m[i, col_index_list[[i]]] <- as.numeric(dt.ngt[[i]])
-  #   }
-  #   m <- as.data.frame(m)
-  #   m[, 5] <- rownames(m)
-  #   m <- m[, c(5, 1, 2, 3, 4)]
-  #
-  #   colnames(m) <- c("Variant", "NGT0", "NGT1", "NGT2", "NGT3")
-  # }
-  #
-  # #replace NA with zeros
-  # m[is.na(m)] <- 0
-  # m
+}
+
+
+
+
+
+#' Filtering by genotype quality
+#'
+#' Removes genotype calls in cells with quality < cutoff
+#'
+#' @param sce A \code{SingleCellExperiment} object, with at least a \code{NGT} and a \code{GQ} slot.
+#' @param cutoff Genotype quality cutoff (Phred scale). Default is 30.
+#' @return A \code{SingleCellExperiment} object with modified \code{NGT} slot.
+filter_GQ <- function(sce, cutoff = 30){
+
+  low_GQ <- assays(sce)[["GQ"]] < cutoff
+  ngt <- assays(sce)[["NGT"]]
+  ngt[low_GQ] <- 3
+  assays(sce)[["NGT"]] <- ngt
+
+  return(sce)
+}
+
+
+
+
+
+#' Filtering by sequencing depth
+#'
+#' Removes genotype calls in cells with depth < cutoff
+#'
+#' @param sce A \code{SingleCellExperiment} object, with at least a \code{NGT} and a \code{DP} slot.
+#' @param cutoff Sequencing depth cutoff. Default is 10.
+#' @return A \code{SingleCellExperiment} object with modified \code{NGT} slot.
+filter_DP <- function(sce, cutoff = 10){
+
+  low_DP <- assays(sce)[["GQ"]] < cutoff
+  ngt <- assays(sce)[["NGT"]]
+  ngt[low_DP] <- 3
+  assays(sce)[["NGT"]] <- ngt
+
+  return(sce)
+}
+
+
+
+
+
+#' Filtering by variant allele frequency
+#'
+#' Removes genotype calls in cells with variant allele frequency < cutoff
+#'
+#' @param sce A \code{SingleCellExperiment} object, with at least a \code{NGT} and a \code{AF} slot.
+#' @param cutoff Variant allele frequency cutoff. Default is 20. The unit is in percentage.
+#' @return A \code{SingleCellExperiment} object with modified \code{NGT} slot.
+filter_AF <- function(sce, cutoff = 20){
+
+  low_AF <- assays(sce)[["AF"]] < cutoff
+  ngt <- assays(sce)[["NGT"]]
+  ngt[low_AF] <- 3
+  assays(sce)[["NGT"]] <- ngt
+
+  return(sce)
+}
+
+
+
+
+
+#' Filtering variants with poor genotyping performance
+#'
+#' Removes variants genotyped in < cutoff% of cells
+#'
+#' @param sce A \code{SingleCellExperiment} object, with at least a \code{NGT}.
+#' @param cutoff The unit is in percentage. The default is 50.
+#' @return A modified \code{SingleCellExperiment} (containing fewer variants).
+filter_variants_percent_genotyped <- function(sce, cutoff = 50){
+  n_Cells <- ncol(sce) #Number of cells
+
+  ngt <- assays(sce)[["NGT"]]
+  ngt <- data.table(ngt)
+
+  ngt <- apply(ngt, 1, function(x) sum(x == 3)) #Count number of ungenotyped cells
+  ngt <- ngt * 100 / n_Cells #Calculate percentage of ungenotyped cells
+  ngt <- ngt > cutoff #Index of low quality variants
+
+  sce <- sce[-ngt]
+
+  return(sce)
+}
+
+
+
+
+
+#' Filtering cells with poor genotyping performance
+#'
+#' Removes cells with <cutoff% of variants genotyped
+#'
+#' @param sce A \code{SingleCellExperiment} object, with at least a \code{NGT}.
+#' @param cutoff The unit is in percentage. The default is 50.
+#' @return A modified \code{SingleCellExperiment} (containing fewer cells).
+filter_cells_percent_genotyped <- function(sce, cutoff = 50){
+  n_Variants <- nrow(sce) #Number of cells
+
+  ngt <- assays(sce)[["NGT"]]
+  ngt <- data.table(ngt)
+
+  ngt <- apply(ngt, 2, function(x) sum(x == 3)) #Count number of ungenotyped variants
+  ngt <- ngt * 100 / n_Variants #Calculate percentage of ungenotyped variants
+  ngt <- ngt > cutoff #Index of low quality variants
+
+  sce <- sce[, -ngt]
+
+  return(sce)
+}
+
+
+
+
+
+#' Filtering variants present in very few cells
+#'
+#' Removes variants mutated in < cutoff% of cells
+#'
+#' @param sce A \code{SingleCellExperiment} object, with at least a \code{NGT}.
+#' @param cutoff The unit is in percentage. The default is 1.
+#' @return A modified \code{SingleCellExperiment} (containing fewer variants).
+filter_variants_percent_mutated <- function(sce, cutoff = 1){
+  n_Cells <- ncol(sce) #Number of cells
+
+  ngt <- assays(sce)[["NGT"]]
+  ngt <- data.table(ngt)
+
+  ngt <- apply(ngt, 1, function(x) sum(x == 1 | x == 2)) #Count number of mutated cells
+  ngt <- ngt * 100 / n_Cells #Calculate percentage of mutated cells
+  ngt <- ngt < cutoff #Index of low frequency variants
+
+  sce <- sce[-ngt]
+
+  return(sce)
 }
