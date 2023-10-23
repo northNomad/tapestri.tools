@@ -3,13 +3,13 @@
 #' get_variant retrieves all the dna variants in an .h5 file as a data.table or GRanges
 #'
 #' @param h5f h5f
-#' @param format \code{data.table} by default.
+#' @param format \code{data.table} by default. Can also be \code{GRanges}.
 #' @examples
 #' path <- "path/to/.h5"
 #' h5f <- read_h5f(path)
 #' feature_data <- get_variants(h5f)
 get_variants <- function(h5f,
-                         format = c("data.table", "GRanges")){
+                         format = "data.table"){
 
   dt.var <- rhdf5::h5read(h5f, "/assays/dna_variants/ca") %>%
     do.call(cbind, .) %>%
@@ -43,7 +43,7 @@ get_variants <- function(h5f,
 #' get_flt3itd retrieves FLT3 ITD variants in an .h5 file
 #'
 #' @param h5f h5f
-#' @param format \code{data.table} by default.
+#' @param format \code{data.table} by default. Can also be \code{GRanges}.
 #' @param gr_coordinate_within A \code{GRanges} object.
 #'  Specifies the genomic coordinates to search for ITD mutations in the FLT3 gene.
 #'  Currently uses hg19 coordinates as reference.
@@ -51,7 +51,7 @@ get_variants <- function(h5f,
 #'  Specifies the minimum and maximum insertion size (in basepairs) introduced by an ITD mutation.
 #' @return A \code{data.table} or a \code{GRanges} object with FLT3-ITD variants.
 get_flt3itd <- function(h5f,
-                        format = c("data.table", "GRanges"),
+                        format = "data.table",
                         gr_coordinate_within = GRanges(seqnames = "chr13",
                                                        ranges = IRanges(start = 28607990, end = 28608531)
                                                        ), #exon14-15
