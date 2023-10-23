@@ -39,7 +39,7 @@ read_h5 <- function(path){
 #' @param index_variants A named numeric vector. You should use \code{get_variants_index} to retrieve the indexes.
 #' @param index_cells A numeric vector. Specifies which cells (columns) to retrieve.
 #' @param format A character. Specifies the return format. Either a \code{list} or a \code{SingleCellExperiment}.
-#' @return Default is a named \code{list}. Can return a \code{SingleCellExperiment} if specified.
+#' @return Default is a \code{SingleCellExperiment} object. Can return a named \code{list} if specified.
 #' @examples
 #' #' #Retrieving the NGT matrix for IDH1_R132H and NPM1c
 #' \dontrun{
@@ -51,7 +51,7 @@ read_assays_variants <- function(h5f,
                                  included_assays = c("AF", "DP", "FILTER_MASK", "GQ", "NGT", "RGQ"),
                                  index_variants = NULL,
                                  index_cells = NULL,
-                                 format = c("list", "SingleCellExperiment")){
+                                 format = c("SingleCellExperiment", "list")){
 
   assays_list <- list()
     for(i in 1:length(included_assays)){
@@ -140,7 +140,7 @@ read_protein_counts <- function(h5f,
 #'   gr_amplicons <- read_amplicons_bed("path/to/bed")
 #' }
 read_amplicons_bed <- function(bed,
-                               format = c("GRanges", "data.table")){
+                               format = "GRanges"){
 
   name_col <- c("chrom", "chromStart", "chromEnd", "name")
   x <- read.delim(bed, col.names = name_col, header = FALSE) %>% data.table()
