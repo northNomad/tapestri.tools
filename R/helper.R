@@ -3,9 +3,12 @@
 #' count_cells tally the number of called genotypes (NGT slot) of given variants
 #'
 #' @param x input, either an .h5f or a SingleCellExperiment object.
+#' @param slot Slot storing the genotype calls. Used if x is a SingleCellExperiment object.
+#'             Default is "NGT".
 #' @param format \code{matrix} by default.
 count_cells <- function(x,
                         variants, 
+                        slot = "NGT",
                         index_cells = NULL, 
                         percent_mutated = TRUE, 
                         percent_genotyped = TRUE){
@@ -49,7 +52,7 @@ count_cells <- function(x,
   if(class(x) == "SingleCellExperiment"){
     index <- match(names(variants), rownames(x))
     index <- index[!is.na(index)]
-    dt.ngt <- assays(x)[["NGT"]][index, ]
+    dt.ngt <- assays(x)[[slot]][index, ]
   }
   
   #make dt.ngt a matrix in case if user only supplies one variant.
