@@ -9,7 +9,7 @@ count_cells <- function(x,
                         index_cells = NULL, 
                         percent_mutated = TRUE, 
                         percent_genotyped = TRUE){
-  #Check if x is an hd5 file or an sce object
+  #Check if x is an hf5 file or an sce object
   if(class(x) != "H5IdComponent" && class(x) != "SingleCellExperiment"){
     stop("The input file needs to be an h5f or a SingleCellExperiment object.")
   }
@@ -21,11 +21,11 @@ count_cells <- function(x,
   }
   
   #Check if variants are present
-  if(!is.null(h5f)){
-    detected <- variants %in% get_variants(h5f)$id
+  if(class(x) == "H5IdComponent"){
+    detected <- variants %in% get_variants(x)$id
   }
-  if(!is.null(sce)){
-    detected <- variants %in% rownames(sce)
+  if(class(x) == "SingleCellExperiment"){
+    detected <- variants %in% rownames(x)
   }
   
   #Report any undetected variants
@@ -39,8 +39,8 @@ count_cells <- function(x,
   
   #get called genotype of variants
   if(class(x) == "H5IdComponent"){
-    index <- get_variants_index(h5f, variants)
-    dt.ngt <- tapestri.tools::read_assays_variants(h5f, 
+    index <- get_variants_index(x, variants)
+    dt.ngt <- tapestri.tools::read_assays_variants(x, 
                                                    included_assays="NGT", 
                                                    index_cells=index_cells, 
                                                    index_variants=index, 
