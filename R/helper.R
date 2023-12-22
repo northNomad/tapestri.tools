@@ -25,7 +25,7 @@ count_cells <- function(x,
     detected <- variants %in% get_variants(x)$id
   }
   if(class(x) == "SingleCellExperiment"){
-    detected <- variants %in% rownames(x)
+    detected <- variants %in% rowData(x)[, "id"]
   }
   
   #Report any undetected variants
@@ -51,7 +51,14 @@ count_cells <- function(x,
     index <- index[!is.na(index)]
     dt.ngt <- assays(x)[["NGT"]][index, ]
   }
-
+  
+  #make dt.ngt a matrix in case if user only supplies one variant.
+  #Need to do this because 'apply' expects input with dimensions.
+  if(is.null(dim(dt.ngt))){
+    dt.ngt <- matrix(dt.ngt, nrow=1)
+    rownames(dt.ngt) <- names(variants)
+  }
+  
   #Count
   NGT0 <- apply(dt.ngt, 1, function(x) sum(x==0))
   NGT1 <- apply(dt.ngt, 1, function(x) sum(x==1))
