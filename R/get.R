@@ -59,8 +59,7 @@ get_flt3itd <- function(h5f,
 
   var_flt3 <- get_variants(h5f, format = "GRanges")
 
-  var_flt3 <- var_flt3[var_flt3 %within% gr_coordinate_within] #Select the variants within `gr_coordinate_within`
-
+  var_flt3 <- subsetByOverlaps(var_flt3, gr_coordinate_within) #Select the variants within `gr_coordinate_within`
   length_alt <- mcols(var_flt3)$id %>% str_split(pattern = "/") %>% lapply(function(x) x[2]) %>% unlist() %>% nchar()
   length_ref <- mcols(var_flt3)$REF %>% gsub(pattern = "\\*", replacement = "") %>% gsub(pattern = "\\.", replacement = "") %>% nchar()
   length_insert <- length_alt - length_ref
