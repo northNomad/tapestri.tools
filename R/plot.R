@@ -29,7 +29,7 @@ plot_upset_with_variants <- function(h5f,
   index_var <- get_variants_index(h5f = h5f, variants = variants, sort = TRUE)
 
   dt.ngt <- read_assays_variants(h5f = h5f, included_assays = "NGT", index_cells = index_cell, index_variants = index_var)
-  dt.ngt <- dt.ngt[[1]]
+  dt.ngt <- assays(dt.ngt)[["NGT"]]
   dt.ngt <- data.table(t(dt.ngt))
 
 
