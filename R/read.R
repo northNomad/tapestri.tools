@@ -119,7 +119,7 @@ read_protein_counts <- function(h5f,
       return(x)
   }
 
-  if(format == "SummarizedExperiment){
+  if(format == "SummarizedExperiment"){
     x <- SummarizedExperiment(list(Count = x), rowData=DataFrame(Protein=id))
     return(x)
   }
