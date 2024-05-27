@@ -95,8 +95,8 @@ read_assays_variants <- function(h5f,
 #' read_protein_counts retrieves the protein read counts in an h5f.
 #'
 #' @param h5f h5f
-#' @param transpose Boolean. If \code{TRUE}, columns represent proteins and rows represent cells.
 #' @param index_cells A numeric vector. Specifies which cells to retrieve.
+#' @param format Either \code{matrix} or \code{SummarizedExperiment}.
 #' @param normalization Either \code{clr} or \code{raw}. Defaults to \code{clr}, as implemented by the \code{compositions} package.
 #' @return matrix
 #' @examples
@@ -105,8 +105,8 @@ read_assays_variants <- function(h5f,
 #'
 #' read_protein_counts(h5f)
 read_protein_counts <- function(h5f,
-                                transpose = c(TRUE, FALSE),
                                 index_cells = NULL,
+                                format = c("SummarizedExperiment", "matrix"),
                                 normalization = c("clr", "raw")){
   x <- rhdf5::h5read(h5f, "/assays/protein_read_counts/layers/read_counts", index = list(NULL, index_cells))
   id <- rhdf5::h5read(h5f, "/assays/protein_read_counts/ca/id")
@@ -114,13 +114,13 @@ read_protein_counts <- function(h5f,
   if(normalization == "clr"){
     x <- base::apply(x, 2, compositions::clr, simplify = FALSE) %>% do.call(cbind, .)
   }
+  if(format == "matrix"){
+      rownames(x) <- id
+      return(x)
+  }
 
-  if(transpose){
-    x <- t(x)
-    colnames(x) <- id
-    return(x)
-  } else{
-    rownames(x) <- id
+  if(format == "SummarizedExperiment){
+    x <- SummarizedExperiment(list(Count = x), rowData=DataFrame(Protein=id))
     return(x)
   }
 }
